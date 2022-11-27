@@ -1,17 +1,22 @@
 import { FC, useEffect, useState } from "react";
 import { PageHeader, Button, Form } from "antd";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import * as go from "gojs";
 import * as Figures from "gojs/extensionsJSM/Figures";
 import { DrawCommandHandler } from "gojs/extensionsJSM//DrawCommandHandler";
+import { usePrivateGuard } from "../hooks/usePrivateGuard";
 
-console.log(Figures)
-console.clear()
+console.log(Figures);
+console.clear();
 let myDiagram: any;
 let isInited = false;
 
-export const Home: FC = () => {
+export const Project: FC = () => {
+  usePrivateGuard();
+
+  const { id } = useParams();
+
   const [socket, setSocket] = useState<null | WebSocket>(null);
   const [form] = Form.useForm();
 
@@ -26,24 +31,23 @@ export const Home: FC = () => {
   }, [socket]);
 
   useEffect(() => {
-    if (!localStorage.getItem("username")) {
-      navigate("/auth");
-    }
-
+    // if (!localStorage.getItem("username")) {
+    //   navigate("/auth");
+    // }
     // if (!socket) {
     //   setSocket(new WebSocket(`ws://localhost:80/ws`));
     // }
   }, []);
 
   useEffect(() => {
-    const container = document.querySelector('#myDiagramDiv')
+    const container = document.querySelector("#myDiagramDiv");
 
     if (container) {
-      container.addEventListener('mouseup', () => {
-        console.log(myDiagram.model.toJson())
-      })
+      container.addEventListener("mouseup", () => {
+        console.log(myDiagram.model.toJson());
+      });
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
     function init() {
@@ -103,7 +107,6 @@ export const Home: FC = () => {
         "undoManager.isEnabled": true,
       });
 
-      // Node template
 
       myDiagram.nodeTemplate = $(
         go.Node,
@@ -788,7 +791,7 @@ export const Home: FC = () => {
       isInited = true;
     }
 
-    console.log(myDiagram)
+    console.log(myDiagram);
   }, []);
 
   return (
@@ -804,12 +807,12 @@ export const Home: FC = () => {
           <>
             <Button
               onClick={() => {
-                localStorage.removeItem("username");
-                navigate("/auth");
+                navigate("/");
+                isInited = false;
               }}
               type="primary"
             >
-              Выйти
+              На главную
             </Button>
           </>,
         ]}
